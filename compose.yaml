@@ -1,0 +1,53 @@
+services:
+  # php
+  app:
+    container_name: php.studio_flag
+    build:
+      context: .
+    volumes:
+      - .:/var/www/html
+    working_dir: /var/www/html
+    environment:
+      - DB_HOST=mysql
+      - DB_NAME=${DB_DATABASE}
+      - DB_USER=${DB_USERNAME}
+      - DB_PASS=${DB_PASSWORD}
+      - DB_PORT=3306
+    depends_on:
+      - mysql
+    command: >
+      sh -c "
+      chown -R www-data:www-data /var/www/html/storage/ &&
+      chmod -R 775 /var/www/html/storage/ &&
+      php-fpm
+      "
+
+  # nginx
+  # webserver:
+  #   image: nginx:latest
+  #   container_name: nginx.personal-task-manager
+  #   ports:
+  #     - "8000:80"
+  #   volumes:
+  #     - .:/var/www/html
+  #     - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+  #   depends_on:
+  #     - app
+
+  # mysql
+  mysql:
+    image: mysql:latest
+    container_name: mysql.studio_flag
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER:     ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql/
+
+volumes:
+  mysql-data:
+
