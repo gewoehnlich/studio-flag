@@ -1,5 +1,5 @@
-PHP_CONTAINER = php.studio-flag
-MYSQL_CONTAINER = mysql.studio-flag
+PHP_CONTAINER = php.studio_flag
+MYSQL_CONTAINER = mysql.studio_flag
 PACKAGE_MANAGER := $(shell \
 	if command -v apt-get > /dev/null; then echo apt; \
 	elif command -v dnf > /dev/null; then echo dnf; \
