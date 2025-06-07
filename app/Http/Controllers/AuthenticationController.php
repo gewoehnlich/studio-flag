@@ -3,68 +3,64 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\LogoutRequest;
+use App\Services\AuthService;
+use App\Http\Resources\UserResource;
 use Illuminate\Http\JsonResponse;
 
-class AuthenticationController extends Controller
+final class AuthenticationController extends Controller
 {
-    public function register(RegisterRequest $request): JsonResponse
+    public static function register(RegisterRequest $request): JsonResponse
     {
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
-
-        $token = $user->createToken('studio-flag');
+        $result = AuthService::register($request->validated());
 
         return response()->json([
             'success' => true,
-            'message' => 'Вы успешно зарегистрировались, ' . $user->name . '!',
-            'token' => $token->plainTextToken
+            'message' => 'Вы успешно зарегистрировались!',
+            'user' => new UserResource($result['user']),
+            'token' => $result['token']
         ]);
     }
 
     public function login(LoginRequest $request): JsonResponse
     {
-        $user = User::where('email', $request->email)->first();
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        $result = AuthService::login($request->validated());
+
+        if (!$result) {
             return response()->json([
                 'success' => false,
                 'message' => 'Неправильный логин или пароль.'
             ], 401);
         }
 
-        $user->tokens()->delete();
-
-        $token = $user->createToken('studio-flag');
-
         return response()->json([
             'success' => true,
-            'message' => 'С возвращением, ' . $user->name . '!',
-            'token' => $token->plainTextToken
+            'message' => 'Вы успешно вошли в свой аккаунт!',
+            'user' => new UserResource($result['user']),
+            'token' => $result['token']
         ]);
     }
 
     public function logout(LogoutRequest $request): JsonResponse
     {
         $user = $request->user();
-        if (!$user) {
+
+        $result = AuthService::logout($user);
+
+        if (!$result) {
             return response()->json([
                 'success' => false,
                 'message' => 'Не удалось найти пользователя по такому Bearer Token.'
             ], 401);
         }
 
-        $user->tokens()->delete();
-
         return response()->json([
             'success' => true,
-            'message' => 'Вы успешно вышли со своего аккаунта, ' . $user->name . '.',
+            'message' => 'Вы успешно вышли со своего аккаунта!',
+            'user' => new UserResource($user)
         ]);
     }
 }
