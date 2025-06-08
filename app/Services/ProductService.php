@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Collection;
 
-final class ProductService extends Collection
+final class ProductService extends Service
 {
     public static function index(array $data): Collection
     {

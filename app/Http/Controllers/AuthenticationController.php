@@ -7,6 +7,7 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\LogoutRequest;
 use App\Http\Resources\UserResource;
 use App\Services\AuthService;
+use App\Services\CartService;
 use Illuminate\Http\JsonResponse;
 
 final class AuthenticationController extends Controller
@@ -14,6 +15,8 @@ final class AuthenticationController extends Controller
     public static function register(RegisterRequest $request): JsonResponse
     {
         $result = AuthService::register($request->validated());
+
+        $cart = CartService::store($result['user']['id']);
 
         return response()->json([
             'success' => true,

@@ -4,9 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Product extends Model
+class Cart extends Model
 {
     use HasFactory;
 
@@ -16,10 +17,7 @@ class Product extends Model
      * @var list<string>
      */
     protected $fillable = [
-        'title',
-        'description',
-        'price',
-        'stock',
+        'id'
     ];
 
     /**
@@ -43,8 +41,13 @@ class Product extends Model
         ];
     }
 
-    public function cartItem(): HasMany
+    public function items(): HasMany
     {
         return $this->hasMany(CartItem::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }
