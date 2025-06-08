@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Cart;
+use App\Models\CartItem;
 use Illuminate\Database\Eloquent\Collection;
 
 final class CartService extends Service
