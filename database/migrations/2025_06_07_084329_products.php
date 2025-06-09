@@ -15,7 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('description')->nullable();
+            $table->decimal('price', 7, 2);
+            $table->unsignedInteger('stock')->default(0);
             $table->timestamps();
+
+            $table->index('price');
         });
     }
 

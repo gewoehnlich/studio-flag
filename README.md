@@ -100,7 +100,9 @@ Authorization: Bearer Token (например, 1|FQK6NGt7B0edfbYDpBS60K97ABQp2mT
 
 {
     "title": "title",
-    "description": "description"
+    "description": "description",
+    "price": "1000.00",
+    "stock": 3
 }
 
 Response:
@@ -108,9 +110,11 @@ Response:
     "success": true,
     "message": "Успешно создан новый товар!",
     "result": {
-        "id": 1,
+        "id": 2,
         "title": "title",
-        "description": "description"
+        "description": "description",
+        "price": "1000.00",
+        "stock": 3
     }
 }
 ```
@@ -139,7 +143,9 @@ Response:
         {
             "id": {id},
             "title": "title",
-            "description": "description"
+            "description": "description",
+            "price": "1000.00",
+            "stock": 3
         }
     ]
 }
@@ -155,6 +161,7 @@ Filters:
     'upper_price' => 'nullable|numeric|between:0,99999.99',
     'order_by'    => 'nullable|string|in:asc,desc',
     'limit'       => 'nullable|integer',
+    'id'          => 'nullable|integer'
 
 Response:
 {
@@ -163,14 +170,16 @@ Response:
         {
             "id": 1,
             "title": "title",
-            "description": "description"
+            "description": null,
+            "price": "1000.00",
+            "stock": 3
         }
     ]
 }
 ```
 ## Сортировка по цене
 ```
-GET /api/products
+GET /api/products?lower_price={lower_price}&upper_price={upper_price}
 Headers => "Accept": "application/json"
 Authorization: Bearer Token (например, 1|FQK6NGt7B0edfbYDpBS60K97ABQp2mTVbQuIGydj01c5e132)
 
@@ -179,6 +188,7 @@ Filters:
     'upper_price' => 'nullable|numeric|between:0,99999.99',
     'order_by'    => 'nullable|string|in:asc,desc',
     'limit'       => 'nullable|integer',
+    'id'          => 'nullable|integer'
 
 Response:
 {
@@ -187,7 +197,16 @@ Response:
         {
             "id": 1,
             "title": "title",
-            "description": "description"
+            "description": "description",
+            "price": "1000.00",
+            "stock": 3
+        },
+        {
+            "id": 2,
+            "title": "title",
+            "description": "description",
+            "price": "1005.00",
+            "stock": 3
         }
     ]
 }
@@ -217,7 +236,7 @@ Headers => "Accept": "application/json"
 Authorization: Bearer Token (например, 1|FQK6NGt7B0edfbYDpBS60K97ABQp2mTVbQuIGydj01c5e132)
 
 {
-    "status": "cancelled"
+    "status": "paid"
 }
 
 Response:

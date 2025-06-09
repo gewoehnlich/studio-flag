@@ -27,6 +27,10 @@ final class ProductService extends Service
             $query->limit($data['limit']);
         }
 
+        if (!empty($data['id'])) {
+            $query->where('id', $data['id']);
+        }
+
         return $query->get();
     }
 

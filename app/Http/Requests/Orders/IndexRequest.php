@@ -28,6 +28,7 @@ class IndexRequest extends FormRequest
             'start_date' => 'nullable|date|date_format:Y-m-d',
             'end_date'   => 'nullable|date|date_format:Y-m-d',
             'status'     => ['nullable', Rule::enum(OrderStatus::class)],
+            'id'         => 'nullable|integer',
         ];
     }
 

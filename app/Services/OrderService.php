@@ -25,6 +25,10 @@ final class OrderService extends Service
             $query->where('status', $data['status']);
         }
 
+        if (!empty($data['id'])) {
+            $query->where('id', $data['id']);
+        }
+
         return $query->get();
     }
 
