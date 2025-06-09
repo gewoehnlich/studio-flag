@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\OrderStatus;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Services\OrderService;
@@ -54,14 +55,27 @@ class OrderController extends Controller
             ], 404);
         }
 
-        $data = $cart->toArray();
+        $data = $request->validated();
+        $data['items'] = $cart->toArray()['items'];
         $data['user_id'] = $id;
+        $data['status'] = OrderStatus::PENDING;
+        // $data['payment_link'] = route('payment.link', [
+        //      'order_id' => $data['order_id'],
+        //      'payment_method_id' => $data['payment_method_id']
+        // ]);
+        $data['payment_link'] = 'remove later';
+
+        // dd($data);
 
         $result = OrderService::store($data);
 
         return response()->json([
             'success' => true,
-            'message' => 'Успешно создан новый заказ!',
+            'message' => 'Успешно создан новый заказ!\n' .
+                         'Перейдите по ссылке для оплаты: ' . route('payment.link', [
+                             'order_id' => $result->id,
+                             'payment_method_id' => $result->payment_method_id
+                         ]),
             'result' => new OrderResource($result)
         ]);
     }

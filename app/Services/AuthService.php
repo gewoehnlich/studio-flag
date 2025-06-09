@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\User;
+use App\Models\Cart;
 use Illuminate\Support\Facades\Hash;
 
 abstract class AuthService extends Service
@@ -16,6 +17,8 @@ abstract class AuthService extends Service
         ]);
 
         $token = $user->createToken('studio-flag')->plainTextToken;
+
+        $cart = Cart::create(['id' => $user->id]);
 
         return compact('user', 'token');
     }

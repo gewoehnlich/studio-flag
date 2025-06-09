@@ -4,8 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use App\Http\Requests\Cart\IndexRequest;
 use App\Http\Requests\Cart\StoreRequest;
+use App\Http\Requests\Cart\UpdateRequest;
+use App\Http\Requests\Cart\DeleteRequest;
 use App\Http\Resources\CartResource;
+use App\Http\Resources\CartItemResource;
 use App\Services\CartService;
 
 class CartController extends Controller
@@ -13,7 +17,7 @@ class CartController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): JsonResponse
+    public function index(IndexRequest $request): JsonResponse
     {
         $id = $request->user()->id;
 
@@ -22,7 +26,7 @@ class CartController extends Controller
         if (!$result) {
             return response()->json([
                 'success' => false,
-                'message' => 'Не удалось найти корзину пользователя с ID № ' . $id . '.'
+                'message' => 'Не удалось найти корзину пользователя с ID № ' . $id . '.'     // fix message
             ]);
         }
 
@@ -61,7 +65,8 @@ class CartController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Успешно обновлена корзина пользователя № ' . $id . '!',
+            'message' => 'Успешно добавлен новый товар в корзину!',
+            'result' => new CartItemResource($result)
         ]);
     }
 
@@ -84,19 +89,14 @@ class CartController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id): JsonResponse
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Request $request): JsonResponse
+    public function update(UpdateRequest $request): JsonResponse
     {
         $id = $request->user()->id;
 
-        $result = CartService::delete($id);
+        $data = $request->validated();
+        $data['cart_id'] = $id;
+
+        $result = CartService::update($data);
 
         if (!$result) {
             return response()->json([
@@ -107,7 +107,32 @@ class CartController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Успешно удалены товары у корзины пользователя с № ' . $id . '!'
+            'message' => 'Успешно обновлена корзина пользователя № ' . $id . '!',
+        ]);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(DeleteRequest $request): JsonResponse
+    {
+        $id = $request->user()->id;
+
+        $data = $request->validated();
+        $data['cart_id'] = $id;
+
+        $result = CartService::delete($data);
+
+        if (!$result) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Не удалось найти корзину пользователя с ID № ' . $id . '.'
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Успешно удалены товары у корзины пользователя с № ' . $id . '!' // fix message
         ]);
     }
 }

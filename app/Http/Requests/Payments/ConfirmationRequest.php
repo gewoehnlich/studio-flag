@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Requests\OrderItems;
+namespace App\Http\Requests\Payments;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreRequest extends FormRequest
+class ConfirmationRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,8 +22,8 @@ class StoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'product_id' => 'required|integer',
             'order_id' => 'required|integer',
+            'payment_method_id' => 'required|integer'
         ];
     }
 }

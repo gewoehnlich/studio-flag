@@ -39,9 +39,7 @@ final class PaymentMethodService extends Service
 
         $data['payment_url_template'] = route('payment_method.base', ['name' => $data['name']]);
 
-        $result = $paymentMethod->update($data);
-
-        return $result;
+        return $paymentMethod->update($data);
     }
 
     public static function delete(int $id): bool

@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\Cart;
 use App\Models\Order;
+use App\Jobs\CancelOrderJob;
 use Illuminate\Database\Eloquent\Collection;
 
 final class OrderService extends Service
@@ -20,7 +22,7 @@ final class OrderService extends Service
         }
 
         if (!empty($data['status'])) {
-            $query->where('status', '===', $data['status']);
+            $query->where('status', $data['status']);
         }
 
         return $query->get();
@@ -28,8 +30,22 @@ final class OrderService extends Service
 
     public static function store(array $data): Order
     {
-        $data['status'] = 'pending';
-        return Order::create($data);
+        $order = Order::create($data);
+
+        foreach ($data['items'] as $item) {
+            $order->items()->create([
+                'order_id' => $order->id,
+                'product_id' => $item['product_id'],
+            ]);
+        }
+
+        // Cart::where(['id' => $data['user_id']])->items()->delete();
+        $cart = Cart::where(['id' => $data['user_id']])->first();
+        $cart->items()->delete();
+
+        CancelOrderJob::dispatch($order)->delay(now()->addMinutes(2));
+
+        return $order;
     }
 
     public static function update(array $data, int $id): bool

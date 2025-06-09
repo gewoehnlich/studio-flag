@@ -13,7 +13,24 @@ final class CartService extends Service
         return Cart::with('items')->where('id', $id)->first();
     }
 
-    public static function store(array $data): bool
+    public static function store(array $data): CartItem | null
+    {
+        $cart = Cart::find($data['cart_id']);
+
+        if (!$cart) {
+            return null;
+        }
+
+        $item = CartItem::where(['product_id' => $data['product_id'], 'cart_id' => $data['cart_id']])->first();
+
+        if ($item) {
+            return null;
+        }
+
+        return CartItem::create($data);
+    }
+
+    public static function update(array $data): bool
     {
         $cart = Cart::find($data['cart_id']);
 
@@ -30,12 +47,22 @@ final class CartService extends Service
         return true;
     }
 
-    public static function delete(int $id): bool
+    public static function delete(array $data): bool
     {
-        $cart = Cart::find($id);
+        $cart = Cart::find($data['cart_id']);
 
         if (!$cart) {
             return false;
+        }
+
+        if (isset($data['product_id'])) {
+            $item = CartItem::where(['product_id' => $data['product_id'], 'cart_id' => $data['cart_id']])->first();
+
+            if (!$item) {
+                return false;
+            }
+
+            return $item->delete();
         }
 
         return $cart->items()->delete();
