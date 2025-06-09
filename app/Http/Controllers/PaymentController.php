@@ -29,7 +29,7 @@ class PaymentController extends Controller
         if ($order->user_id != $id) {
             return response()->json([
                 'success' => false,
-                'message' => 'Можно оплатить только ваш заказ.'
+                'message' => 'Нельзя оплатить не свой заказ.'
             ]);
         }
 
@@ -61,14 +61,21 @@ class PaymentController extends Controller
         if ($order->user_id != $id) {
             return response()->json([
                 'success' => false,
-                'message' => 'Можно оплатить только ваш заказ.'
+                'message' => 'Нельзя оплатить не свой заказ.'
             ]);
         }
 
-        if ($order->status !== OrderStatus::PENDING) {
+        if ($order->status === OrderStatus::CANCELLED) {
             return response()->json([
                 'success' => false,
                 'message' => 'Время данное на оплату истекло.'
+            ]);
+        }
+
+        if ($order->status === OrderStatus::PAID) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Заказ уже оплачен!'
             ]);
         }
 
