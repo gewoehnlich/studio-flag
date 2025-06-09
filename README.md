@@ -1,61 +1,353 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# studio-flag
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Стек
+* PHP 8.4.6
+* Nginx
+* MySQL 9.3
+* Laravel 12
+* Docker
+* Composer
 
-## About Laravel
+## Как запустить (через Docker)
+Можно запустить проект через Makefile
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+```
+make build
+```
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+или без Makefile
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+```
+composer install
+docker compose up --build
 
-## Learning Laravel
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+также для работы Job в Laravel нужно запустить команду 
+```
+php artisan queue:work
+```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Как запустить (без Docker)
+```
+composer run dev
+php artisan queue:work
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Авторизация пользователя
+```
+POST /api/register
+Headers => "Accept": "application/json"
+{
+    "name": "name",
+    "email": "email@example.com",
+    "password": "password"
+}
 
-## Laravel Sponsors
+Response:
+{
+    "success": true,
+    "message": "Вы успешно зарегистрировались!",
+    "user": {
+        "id": 1,
+        "name": "name",
+        "email": "email@example.com"
+    },
+    "token": "1|FQK6NGt7B0edfbYDpBS60K97ABQp2mTVbQuIGydj01c5e132"
+}
+```
+```
+POST /api/login
+Headers => "Accept": "application/json"
+{
+    "email": "email@example.com",
+    "password": "password"
+}
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Response:
+{
+    "success": true,
+    "message": "Вы успешно вошли в свой аккаунт!",
+    "user": {
+        "id": 1,
+        "name": "name",
+        "email": "email@example.com"
+    },
+    "token": "2|wkrC6t0xc9WVlds5EZ9woHWS3Ic3sfajOF8fYGLU66ca31a0"
+}
+```
+```
+POST /api/logout
+Headers => "Accept": "application/json"
+Authorization: Bearer Token (например, 1|FQK6NGt7B0edfbYDpBS60K97ABQp2mTVbQuIGydj01c5e132)
 
-### Premium Partners
+Response:
+{
+    "success": true,
+    "message": "Вы успешно вышли со своего аккаунта!",
+    "user": {
+        "id": 1,
+        "name": "name",
+        "email": "email@example.com"
+    }
+}
+```
+## Добавить товар в корзину пользователя
+```
+POST /api/products
+Headers => "Accept": "application/json"
+Authorization: Bearer Token (например, 1|FQK6NGt7B0edfbYDpBS60K97ABQp2mTVbQuIGydj01c5e132)
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+{
+    "title": "title",
+    "description": "description"
+}
 
-## Contributing
+Response:
+{
+    "success": true,
+    "message": "Успешно создан новый товар!",
+    "result": {
+        "id": 1,
+        "title": "title",
+        "description": "description"
+    }
+}
+```
+## Удалить товар из корзины пользователя
+```
+DELETE /api/products/{id}/
+Headers => "Accept": "application/json"
+Authorization: Bearer Token (например, 1|FQK6NGt7B0edfbYDpBS60K97ABQp2mTVbQuIGydj01c5e132)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Response:
+{
+    "success": true,
+    "message": "Успешно удален товар № {id}!"
+}
+```
+## Получить товар по id
+```
+GET /api/products?id={id}
+Headers => "Accept": "application/json"
+Authorization: Bearer Token (например, 1|FQK6NGt7B0edfbYDpBS60K97ABQp2mTVbQuIGydj01c5e132)
 
-## Code of Conduct
+Response:
+{
+    "success": true,
+    "result": [
+        {
+            "id": {id},
+            "title": "title",
+            "description": "description"
+        }
+    ]
+}
+```
+## Получить список товаров
+```
+GET /api/products
+Headers => "Accept": "application/json"
+Authorization: Bearer Token (например, 1|FQK6NGt7B0edfbYDpBS60K97ABQp2mTVbQuIGydj01c5e132)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Filters:
+    'lower_price' => 'nullable|numeric|between:0,99999.99',
+    'upper_price' => 'nullable|numeric|between:0,99999.99',
+    'order_by'    => 'nullable|string|in:asc,desc',
+    'limit'       => 'nullable|integer',
 
-## Security Vulnerabilities
+Response:
+{
+    "success": true,
+    "result": [
+        {
+            "id": 1,
+            "title": "title",
+            "description": "description"
+        }
+    ]
+}
+```
+## Сортировка по цене
+```
+GET /api/products
+Headers => "Accept": "application/json"
+Authorization: Bearer Token (например, 1|FQK6NGt7B0edfbYDpBS60K97ABQp2mTVbQuIGydj01c5e132)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Filters:
+    'lower_price' => 'nullable|numeric|between:0,99999.99',
+    'upper_price' => 'nullable|numeric|between:0,99999.99',
+    'order_by'    => 'nullable|string|in:asc,desc',
+    'limit'       => 'nullable|integer',
 
-## License
+Response:
+{
+    "success": true,
+    "result": [
+        {
+            "id": 1,
+            "title": "title",
+            "description": "description"
+        }
+    ]
+}
+```
+## Оплатить Корзину (создать заказ, получить ссылку на оплату)
+```
+POST /api/orders
+Headers => "Accept": "application/json"
+Authorization: Bearer Token (например, 1|FQK6NGt7B0edfbYDpBS60K97ABQp2mTVbQuIGydj01c5e132)
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Response: 
+{
+    "success": true,
+    "message": "Успешно создан новый заказ!\\nПерейдите по ссылке для оплаты: http://127.0.0.1:8000/api/payments/link?order_id=6&payment_method_id=1",
+    "result": {
+        "id": 6,
+        "user_id": 1,
+        "payment_method_id": 1,
+        "status": "pending"
+    }
+}
+```
+## Обновить статус заказа на “Оплачен”
+```
+PUT /api/orders/{id}/
+Headers => "Accept": "application/json"
+Authorization: Bearer Token (например, 1|FQK6NGt7B0edfbYDpBS60K97ABQp2mTVbQuIGydj01c5e132)
+
+{
+    "status": "cancelled"
+}
+
+Response:
+{
+    "success": true,
+    "message": "Успешно обновлен заказ № {id}!"
+}
+```
+## Получить список заказов
+```
+GET /api/orders
+Headers => "Accept": "application/json"
+Authorization: Bearer Token (например, 1|FQK6NGt7B0edfbYDpBS60K97ABQp2mTVbQuIGydj01c5e132)
+
+Filters:
+    'start_date' => 'nullable|date|date_format:Y-m-d',
+    'end_date'   => 'nullable|date|date_format:Y-m-d',
+    'status'     => ['nullable', Rule::enum(OrderStatus::class)],
+
+Response:
+{
+    "success": true,
+    "result": [
+        {
+            "id": 1,
+            "user_id": 1,
+            "payment_method_id": 1,
+            "status": "paid"
+        },
+        {
+            "id": 2,
+            "user_id": 1,
+            "payment_method_id": 1,
+            "status": "cancelled"
+        }
+    ]
+}
+```
+## Сортировка по дате создания заказа
+```
+GET /api/orders
+Headers => "Accept": "application/json"
+Authorization: Bearer Token (например, 1|FQK6NGt7B0edfbYDpBS60K97ABQp2mTVbQuIGydj01c5e132)
+
+Filters:
+    'start_date' => 'nullable|date|date_format:Y-m-d',
+    'end_date'   => 'nullable|date|date_format:Y-m-d',
+    'status'     => ['nullable', Rule::enum(OrderStatus::class)],
+
+Response:
+{
+    "success": true,
+    "result": [
+        {
+            "id": 1,
+            "user_id": 1,
+            "payment_method_id": 1,
+            "status": "paid"
+        },
+        {
+            "id": 2,
+            "user_id": 1,
+            "payment_method_id": 1,
+            "status": "cancelled"
+        }
+    ]
+}
+```
+## Фильтрация по статусу заказа
+```
+GET /api/orders?status={status}
+Headers => "Accept": "application/json"
+Authorization: Bearer Token (например, 1|FQK6NGt7B0edfbYDpBS60K97ABQp2mTVbQuIGydj01c5e132)
+
+Filters:
+    'start_date' => 'nullable|date|date_format:Y-m-d',
+    'end_date'   => 'nullable|date|date_format:Y-m-d',
+    'status'     => ['nullable', Rule::enum(OrderStatus::class)],
+
+Response:
+{
+    "success": true,
+    "result": [
+        {
+            "id": 1,
+            "user_id": 1,
+            "payment_method_id": 1,
+            "status": {status}
+        },
+        {
+            "id": 2,
+            "user_id": 1,
+            "payment_method_id": 1,
+            "status": {status}
+        }
+    ]
+}
+```
+## Получить заказ по id
+```
+GET /api/orders?id={id}
+Headers => "Accept": "application/json"
+Authorization: Bearer Token (например, 1|FQK6NGt7B0edfbYDpBS60K97ABQp2mTVbQuIGydj01c5e132)
+
+Response:
+{
+    "success": true,
+    "result": [
+        {
+            "id": {id},
+            "user_id": 1,
+            "payment_method_id": 1,
+            "status": {status}
+        }
+    ]
+}
+```
+## Обновление статуса заказа с “На оплату” в “Отменен”, при неоплате его более 2 минут
+При создании заказа создается Job
+для его работы обязательно запустить 'php artisan queue:work'
+
+
+## Удаление
+Запускаем команду:
+```
+make delete
+```
+
+или
+
+```
+docker compose down -v
+```

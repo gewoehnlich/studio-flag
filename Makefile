@@ -30,11 +30,11 @@ install-dependencies:
 	sudo ${PACKAGE_MANAGER} install -y php docker docker-compose composer
 
 build:
+	composer install
 	docker compose up --build
 
 up:
 	docker compose up
-	# composer run dev
 
 down:
 	docker compose down
