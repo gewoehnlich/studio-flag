@@ -25,8 +25,8 @@ class IndexRequest extends FormRequest
         return [
             'lower_price' => 'nullable|numeric|between:0,99999.99',
             'upper_price' => 'nullable|numeric|between:0,99999.99',
+            'order_by'    => 'nullable|string|in:asc,desc',
             'limit'       => 'nullable|integer',
-            'order_by'    => 'nullable|string|in:asc,desc'
         ];
     }
 

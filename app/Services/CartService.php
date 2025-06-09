@@ -15,12 +15,6 @@ final class CartService extends Service
 
     public static function store(array $data): CartItem | null
     {
-        $cart = Cart::find($data['cart_id']);
-
-        if (!$cart) {
-            return null;
-        }
-
         $item = CartItem::where(['product_id' => $data['product_id'], 'cart_id' => $data['cart_id']])->first();
 
         if ($item) {
@@ -50,10 +44,6 @@ final class CartService extends Service
     public static function delete(array $data): bool
     {
         $cart = Cart::find($data['cart_id']);
-
-        if (!$cart) {
-            return false;
-        }
 
         if (isset($data['product_id'])) {
             $item = CartItem::where(['product_id' => $data['product_id'], 'cart_id' => $data['cart_id']])->first();

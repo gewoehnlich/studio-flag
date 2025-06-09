@@ -17,7 +17,6 @@ return new class extends Migration
             $table->unsignedBigInteger('payment_method_id');
             $table->enum('status', ['pending', 'paid', 'cancelled']);
             $table->timestamp('expires_at')->nullable();
-            $table->string('payment_link');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

@@ -96,10 +96,7 @@ class PaymentMethodController extends Controller
      */
     public static function destroy(DeleteRequest $request, int $id): JsonResponse
     {
-        $data = $request->validated();
-        $data['user_id'] = $request->user()->id;
-
-        $result = PaymentMethodService::delete($data, $id);
+        $result = PaymentMethodService::delete($id);
 
         if (!$result) {
             return response()->json([

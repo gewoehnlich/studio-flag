@@ -19,7 +19,6 @@ class OrderResource extends JsonResource
             'user_id' => $this->user_id,
             'payment_method_id' => $this->payment_method_id,
             'status' => $this->status,
-            'payment_link' => $this->payment_link
         ];
     }
 }

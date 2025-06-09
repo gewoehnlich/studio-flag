@@ -39,11 +39,10 @@ final class OrderService extends Service
             ]);
         }
 
-        // Cart::where(['id' => $data['user_id']])->items()->delete();
         $cart = Cart::where(['id' => $data['user_id']])->first();
         $cart->items()->delete();
 
-        CancelOrderJob::dispatch($order)->delay(now()->addMinutes(2));
+        CancelOrderJob::dispatch($order->id)->delay(now()->addMinutes(2));
 
         return $order;
     }

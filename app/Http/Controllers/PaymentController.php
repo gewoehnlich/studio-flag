@@ -65,11 +65,15 @@ class PaymentController extends Controller
             ]);
         }
 
-        if ($order->status != OrderStatus::PENDING) {
+        if ($order->status !== OrderStatus::PENDING) {
             return response()->json([
                 'success' => false,
                 'message' => 'Время данное на оплату истекло.'
             ]);
+        }
+
+        if ($order->status === OrderStatus::PENDING) {
+            $order->update(['status' => OrderStatus::PAID]);
         }
 
         return response()->json([

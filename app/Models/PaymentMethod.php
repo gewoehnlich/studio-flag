@@ -17,7 +17,6 @@ class PaymentMethod extends Model
      */
     protected $fillable = [
         'name',
-        'payment_url_template',
     ];
 
     /**

@@ -23,9 +23,7 @@ class StoreRequest extends FormRequest
     {
         return [
             'title'       => 'required|string|min:1|max:255',
-            'description' => 'nullable|string',
-            'price'       => 'required|numeric|decimal:2|between:0,99999.99',
-            'stock'       => 'nullable|integer|min:0|max:9'
+            'description' => 'nullable|string|max:65535',
         ];
     }
 }

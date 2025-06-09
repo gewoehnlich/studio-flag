@@ -26,7 +26,7 @@ class CartController extends Controller
         if (!$result) {
             return response()->json([
                 'success' => false,
-                'message' => 'Не удалось найти корзину пользователя с ID № ' . $id . '.'     // fix message
+                'message' => 'Не удалось найти корзину пользователя с ID № ' . $id . '.'
             ]);
         }
 
@@ -59,7 +59,7 @@ class CartController extends Controller
         if (!$result) {
             return response()->json([
                 'success' => false,
-                'message' => 'Не удалось найти корзину пользователя с ID № ' . $id . '.'
+                'message' => 'Такой товар уже в корзине!'
             ]);
         }
 
@@ -132,7 +132,7 @@ class CartController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Успешно удалены товары у корзины пользователя с № ' . $id . '!' // fix message
+            'message' => 'Успешно удалены товары у корзины пользователя с № ' . $id . '!'
         ]);
     }
 }

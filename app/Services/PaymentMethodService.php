@@ -24,8 +24,6 @@ final class PaymentMethodService extends Service
 
     public static function store(array $data): PaymentMethod
     {
-        $data['payment_url_template'] = route('payment_method.base', ['name' => $data['name']]);
-
         return PaymentMethod::create($data);
     }
 
@@ -36,8 +34,6 @@ final class PaymentMethodService extends Service
         if (!$paymentMethod) {
             return false;
         }
-
-        $data['payment_url_template'] = route('payment_method.base', ['name' => $data['name']]);
 
         return $paymentMethod->update($data);
     }
@@ -51,31 +47,5 @@ final class PaymentMethodService extends Service
         }
 
         return $paymentMethod->delete();
-    }
-
-    public static function paymentLink(int $id): ?string
-    {
-        $paymentMethod = PaymentMethod::find($id);
-
-        if (!$paymentMethod) {
-            return null;
-        }
-
-        $template = $paymentMethod->payment_url_template;
-
-        return $template . '/payment_link.php';
-    }
-
-    public static function paymentConfirmationLink(int $id): ?string
-    {
-        $paymentMethod = PaymentMethod::find($id);
-
-        if (!$paymentMethod) {
-            return null;
-        }
-
-        $template = $paymentMethod->payment_url_template;
-
-        return $template . '/payment_confirmation_link.php';
     }
 }

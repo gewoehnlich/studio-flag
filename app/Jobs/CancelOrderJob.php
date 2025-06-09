@@ -11,14 +11,14 @@ class CancelOrderJob implements ShouldQueue
 {
     use Queueable;
 
-    protected Order $order;
+    protected int $orderId;
 
     /**
      * Create a new job instance.
      */
-    public function __construct(Order $order)
+    public function __construct(int $orderId)
     {
-        $this->order = $order;
+        $this->orderId = $orderId;
     }
 
     /**
@@ -26,8 +26,10 @@ class CancelOrderJob implements ShouldQueue
      */
     public function handle(): void
     {
-        if ($this->order->status === OrderStatus::PENDING) {
-            $this->order->update(['status' => OrderStatus::CANCELLED]);
+        $order = Order::find($this->orderId);
+
+        if ($order && $order->status === OrderStatus::PENDING) {
+            $order->update(['status' => OrderStatus::CANCELLED]);
         }
     }
 }

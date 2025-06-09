@@ -59,13 +59,6 @@ class OrderController extends Controller
         $data['items'] = $cart->toArray()['items'];
         $data['user_id'] = $id;
         $data['status'] = OrderStatus::PENDING;
-        // $data['payment_link'] = route('payment.link', [
-        //      'order_id' => $data['order_id'],
-        //      'payment_method_id' => $data['payment_method_id']
-        // ]);
-        $data['payment_link'] = 'remove later';
-
-        // dd($data);
 
         $result = OrderService::store($data);
 
@@ -127,7 +120,7 @@ class OrderController extends Controller
         $data = $request->validated();
         $data['user_id'] = $request->user()->id;
 
-        $result = OrderService::delete($data, $id);
+        $result = OrderService::delete($id);
 
         if (!$result) {
             return response()->json([
